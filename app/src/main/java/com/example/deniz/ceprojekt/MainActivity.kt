@@ -20,7 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
-const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
+//const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     //var for the wifiManager API
     lateinit var wifiManager: WifiManager
 
+
+    var scanInProgress=false
 
 
     val broadcastReceiver = object : BroadcastReceiver() {
@@ -77,18 +79,25 @@ class MainActivity : AppCompatActivity() {
  *
  *
  * */
-    fun startScanClicked(view: View){
+    fun startScanClicked(view: View) {
 
+
+    if (!scanInProgress) {
         // Check if the permission has been granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Permission is already available, start scanning
-            Toast.makeText(this, "Permission was granted",Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Permission was granted", Toast.LENGTH_SHORT).show()
+            scanInProgress=true;
             startScanning()
-        }
-        else {
+        } else {
             requestPermission()
         }
     }
+    else{
+        Toast.makeText(this, "Scan already in progress. Please Wait.", Toast.LENGTH_SHORT).show()
+
+    }
+}
 
     private fun startScanning(){
         Toast.makeText(this, "Starting Scan!",Toast.LENGTH_SHORT).show()
@@ -121,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         }
         Toast.makeText(this, "Scan Completed!",Toast.LENGTH_SHORT).show()
         wifiList.text=stringList.toString()
+        scanInProgress=false
 
 
     }
