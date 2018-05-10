@@ -15,7 +15,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@color/colorPrimary"
-        android:onClick="startScanClicked"
+        android:onClick="buttonClicked"
         android:soundEffectsEnabled="false"
         android:text="@string/scanButton"
         android:textColor="@android:color/white"
@@ -25,7 +25,7 @@
 
 
     <TextView
-        android:id="@+id/wifiList"
+        android:id="@+id/displayedText"
         android:layout_width="383dp"
         android:layout_height="445dp"
         android:layout_marginEnd="8dp"

@@ -1,26 +1,35 @@
 package com.example.deniz.ceprojekt
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
+import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.util.Log.d
 import android.view.View
 import java.util.*
 import android.widget.TextView
 import android.widget.Toast
+import com.example.deniz.ceprojekt.R.id.displayedText
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
+
+const val WIFI_NAME ="Ax494"
+const val WIFI_PASSWORD="Iam1H0tSp0t!?"
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,13 +39,17 @@ class MainActivity : AppCompatActivity() {
 
 
     //text views on the screen
-    lateinit var wifiList: TextView
+    lateinit var displayedText: TextView
 
     //var for the wifiManager API
     lateinit var wifiManager: WifiManager
 
+    lateinit var hotspotToConnectTo: ScanResult
 
-    var scanInProgress=false
+
+    var actionInProgress=false
+    var isConfigured =false
+    var hotspotIsAvailable=false
 
 
     val broadcastReceiver = object : BroadcastReceiver() {
@@ -66,38 +79,51 @@ class MainActivity : AppCompatActivity() {
         wifiManager=this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
         //get the TextViews
-        wifiList = findViewById<TextView>(R.id.wifiList)
+        displayedText = findViewById<TextView>(R.id.displayedText)
 
     }
-/**
- *
- *
- *
- * MAYBE IF THIS DOES NOT WORK ADD SECOND PERMISSION ACCESS_COARSE_LOCATION
- *
- *
- *
- *
- * */
-    fun startScanClicked(view: View) {
 
+    //set variables to null/default value
 
-    if (!scanInProgress) {
+    fun init(){
+
+        hotspotIsAvailable=false
+        displayedText.text=""
+        resultList.clear()
+
+    }
+
+fun buttonClicked(view: View){
+
+    //set variables to null/default value
+    init()
+
+    //if the wifi is currently disabled, enable it
+    if(!wifiManager.isWifiEnabled){
+        wifiManager.isWifiEnabled = true
+    }
+    //if no action is in progress
+    if (!actionInProgress) {
         // Check if the permission has been granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Permission is already available, start scanning
             Toast.makeText(this, "Permission was granted", Toast.LENGTH_SHORT).show()
-            scanInProgress=true;
+            actionInProgress=true
             startScanning()
         } else {
             requestPermission()
         }
     }
+    //if a action is already in progress, please wait
     else{
-        Toast.makeText(this, "Scan already in progress. Please Wait.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Actionh already in progress. Please Wait.", Toast.LENGTH_SHORT).show()
 
     }
+
+
 }
+
+
 
     private fun startScanning(){
         Toast.makeText(this, "Starting Scan!",Toast.LENGTH_SHORT).show()
@@ -117,31 +143,104 @@ class MainActivity : AppCompatActivity() {
     private fun stopScanning(){
 
         unregisterReceiver(broadcastReceiver)
-
+        /**ONLY FOR TESTING
         d("Test: Unregister", "0")
 
         val stringList = ArrayList<String>()
 
         //Add the result names to a List
         for(result in resultList){
-            stringList.add(result.SSID)
-            stringList.add("\n")
-            d("Test", result.SSID)
+            if(result.SSID==(WIFI_NAME)){
+                stringList.add(result.SSID)
+                stringList.add("\n")
+                d("Test", result.SSID)
+            }
         }
-        Toast.makeText(this, "Scan Completed!",Toast.LENGTH_SHORT).show()
-        wifiList.text=stringList.toString()
-        scanInProgress=false
+        *ONLY FOR TESTING end*/
 
+        Toast.makeText(this, "Scan Completed!",Toast.LENGTH_SHORT).show()
+
+        checkForHotspot()
+    }
+
+    private fun checkForHotspot(){
+
+        // The wifi is saved in the variable hotspotToConnectTo
+        for(result in resultList){
+            if(result.SSID== WIFI_NAME){
+                hotspotToConnectTo=result
+                hotspotIsAvailable=true
+
+
+            }
+        }
+        //if the variable is initialized above then trying to connect to the hotspot
+        if(hotspotIsAvailable){
+            Toast.makeText(this, "Hotspot Found - trying to Connect",Toast.LENGTH_SHORT).show()
+            connectToHotspot()
+        }
+
+        //if the hotspot was not found...
+        else{
+
+            //check if the hotspot is already configured
+                for(item in wifiManager.configuredNetworks) {
+                    if(item.SSID.substring(1,item.SSID.length-1)==(WIFI_NAME)) {
+                        isConfigured=true
+                    }
+                }
+            //if it is not configured, configure it and scan again
+
+            if(!isConfigured){
+                val conf = WifiConfiguration()
+                conf.SSID = WIFI_NAME
+                conf.preSharedKey = WIFI_PASSWORD
+                wifiManager.addNetwork(conf)
+                Toast.makeText(this, "Hotspot not found - network will be configured", Toast.LENGTH_SHORT).show()
+                startScanning()
+
+            }
+            else {
+                //if it is already configured display a check your device message
+                displayedText.append("Hotspot can not be found - check your devices")
+                actionInProgress=false
+            }
+
+    }
+        }
+
+    private fun connectToHotspot(){
+
+        //disconnect the active wifi connection
+        wifiManager.disconnect()
+        val stringList = ArrayList<String>()
+        var networkId =0
+
+        //search all configured wifi connections
+        for(item in wifiManager.configuredNetworks) {
+
+            //if the netwpork is already configured, find the id and display the desired information
+            if(item.SSID.substring(1,item.SSID.length-1)==(WIFI_NAME)) {
+                networkId = item.networkId
+                displayedText.append("    Name of the connected Wifi: ")
+                displayedText.append(item.SSID)
+                Toast.makeText(this, "network is already configured", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        //connect to the wifi
+        wifiManager.enableNetwork(networkId,true)
+        wifiManager.reconnect()
+
+
+        Toast.makeText(this, "Connected to iPhone hotspot",Toast.LENGTH_LONG).show()
+
+        actionInProgress=false
 
     }
 
     private fun requestPermission(){
-
-
-
-
             // Permission was not granted and must be requested
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
@@ -160,13 +259,7 @@ class MainActivity : AppCompatActivity() {
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-
-
-
-
     }
-
-
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
