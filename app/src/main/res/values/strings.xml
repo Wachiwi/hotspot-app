@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">CEProjekt</string>
     <string name="hello_world_text">0</string>
-    <string name="scanButton">Connect to iPhone</string>
 
+    <string name="buttonOne">Connect to iPhone</string>
+    <string name="buttonTwo">Connect to Raspberry</string>
     <string name="random_heading">wifi is enabled</string>
 </resources>

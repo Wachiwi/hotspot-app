@@ -28,8 +28,8 @@ import com.example.deniz.ceprojekt.R.id.displayedText
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
 
-const val WIFI_NAME ="Ax494"
-const val WIFI_PASSWORD="Iam1H0tSp0t!?"
+lateinit var WIFI_NAME: String
+lateinit var WIFI_PASSWORD: String
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,7 +93,22 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-fun buttonClicked(view: View){
+
+    fun buttonOneClicked(view: View){
+        WIFI_NAME ="Ax494"
+        WIFI_PASSWORD="Iam1H0tSp0t!?"
+
+        buttonClicked()
+    }
+
+
+    fun buttonTwoClicked(view: View){
+        WIFI_NAME ="Rpi"
+        WIFI_PASSWORD="123456789"
+
+        buttonClicked()
+    }
+fun buttonClicked(){
 
     //set variables to null/default value
     init()
