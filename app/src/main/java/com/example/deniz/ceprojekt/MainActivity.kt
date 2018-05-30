@@ -24,6 +24,7 @@ import java.util.*
 import android.widget.TextView
 import android.widget.Toast
 import com.example.deniz.ceprojekt.R.id.displayedText
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
@@ -41,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     //text views on the screen
     lateinit var displayedText: TextView
 
+    lateinit var displayedSymbol: TextView
+
     //var for the wifiManager API
     lateinit var wifiManager: WifiManager
 
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     var actionInProgress=false
     var isConfigured =false
     var hotspotIsAvailable=false
+
 
 
     val broadcastReceiver = object : BroadcastReceiver() {
@@ -80,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         //get the TextViews
         displayedText = findViewById<TextView>(R.id.displayedText)
+        displayedSymbol= findViewById<TextView>(R.id.displayedSymbol)
 
     }
 
@@ -89,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         hotspotIsAvailable=false
         displayedText.text=""
+        displayedSymbol.text=""
         resultList.clear()
 
     }
@@ -212,13 +218,20 @@ fun buttonClicked(){
                 conf.preSharedKey = WIFI_PASSWORD
                 wifiManager.addNetwork(conf)
                 Toast.makeText(this, "Hotspot not found - network will be configured", Toast.LENGTH_SHORT).show()
+                isConfigured=true
+                actionInProgress=false //able to start a new scan
                 startScanning()
 
             }
             else {
                 //if it is already configured display a check your device message
                 displayedText.append("Hotspot can not be found - check your devices")
+               // displayedSymbol.setTextColor(0xFF0000)
+                displayedSymbol.append("X")
+
                 actionInProgress=false
+
+
             }
 
     }
@@ -249,7 +262,8 @@ fun buttonClicked(){
 
 
         Toast.makeText(this, "Connected to iPhone hotspot",Toast.LENGTH_LONG).show()
-
+        //displayedSymbol.setTextColor(0x00FF00)
+        displayedSymbol.append("\u2713")
         actionInProgress=false
 
     }

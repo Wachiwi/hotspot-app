@@ -18,6 +18,7 @@
         android:onClick="buttonOneClicked"
         android:soundEffectsEnabled="false"
         android:text="@string/buttonOne"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,21 +33,38 @@
         android:onClick="buttonTwoClicked"
         android:soundEffectsEnabled="false"
         android:text="@string/buttonTwo"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/displayedText" />
+        app:layout_constraintBottom_toTopOf="@+id/btnPhoneHotspot"
+        tools:layout_editor_absoluteX="0dp" />
 
 
     <TextView
         android:id="@+id/displayedText"
-        android:layout_width="383dp"
-        android:layout_height="445dp"
+        android:layout_width="208dp"
+        android:layout_height="159dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnPiHotspot"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/displayedSymbol"
+        android:layout_width="190dp"
+        android:layout_height="130dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="108sp"
+        app:layout_constraintBottom_toTopOf="@+id/displayedText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
