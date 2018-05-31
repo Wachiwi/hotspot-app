@@ -1,7 +1,6 @@
 package com.example.deniz.ceprojekt
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,21 +9,17 @@ import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.util.Log.d
 import android.view.View
+import android.widget.Button
 import java.util.*
 import android.widget.TextView
 import android.widget.Toast
-import com.example.deniz.ceprojekt.R.id.displayedText
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
@@ -43,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var displayedText: TextView
 
     lateinit var displayedSymbol: TextView
+
+    lateinit var recieveScanButton: Button
 
     //var for the wifiManager API
     lateinit var wifiManager: WifiManager
@@ -85,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         //get the TextViews
         displayedText = findViewById<TextView>(R.id.displayedText)
         displayedSymbol= findViewById<TextView>(R.id.displayedSymbol)
+        recieveScanButton=findViewById<Button>(R.id.btnReceiveScan)
 
     }
 
@@ -265,6 +263,27 @@ fun buttonClicked(){
         //displayedSymbol.setTextColor(0x00FF00)
         displayedSymbol.append("\u2713")
         actionInProgress=false
+
+        recieveScanButton.visibility = View.VISIBLE
+
+
+
+    }
+
+    fun scanButtonClicked(view: View){
+        /*TODO - get The List from the Pi*/
+
+
+
+
+        val secondPart = Intent(this, WifiListActivity::class.java)
+
+        //using the result list from the smatphone scan
+
+        secondPart.putExtra("resultList",resultList)
+
+        startActivity(secondPart)
+
 
     }
 
