@@ -26,6 +26,10 @@ const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 
 lateinit var WIFI_NAME: String
 lateinit var WIFI_PASSWORD: String
+fun triggerPiScan(){
+    /*TODO - get The List from the Pi*/
+
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -271,21 +275,20 @@ fun buttonClicked(){
     }
 
     fun scanButtonClicked(view: View){
-        /*TODO - get The List from the Pi*/
 
-
-
+        triggerPiScan()
 
         val secondPart = Intent(this, WifiListActivity::class.java)
 
         //using the result list from the smatphone scan
 
-        secondPart.putExtra("resultList",resultList)
+        secondPart.putExtra("resultList",resultList) /*TODO - use pi List*/
 
         startActivity(secondPart)
 
 
     }
+
 
     private fun requestPermission(){
             // Permission was not granted and must be requested

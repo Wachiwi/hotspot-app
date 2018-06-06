@@ -52,15 +52,45 @@ class WifiConfigurationActivity : AppCompatActivity() {
     }
 
 
-    fun buttonSubmitClicked(view: View){
-        password = findViewById<EditText>(R.id.password)
 
+    fun buttonSubmitClicked(view: View){
+
+
+
+        sendToPi(wifiName.text,password.text)
+        /*TODO Check status
+               while(true){
+
+
+                   if(/*BUSY*/);
+
+                   else if(/*TIMEOUT*/){
+                       sendToPi(wifiName.text,password.text)
+                   }
+                   else if(/*False*/)
+                        displayErrorMessage and input screen
+
+                   else if(/*OK*/)
+                        displaySuccessfullMessage
+
+
+               }
+               TODO END*/
+
+    }
+
+    fun sendToPi(name: CharSequence, password: CharSequence){
 
         /*TODO Send Password to Raspberry Pi*/
-        wifiName.append(password.text)
 
+    }
 
+    fun displayErrorMessage(){
+        /*TODO*/
+    }
 
+    fun displaySuccessfullMessage(){
+        /*TODO*/
     }
 
 }

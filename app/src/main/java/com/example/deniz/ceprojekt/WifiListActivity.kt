@@ -13,6 +13,8 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import com.example.deniz.ceprojekt.triggerPiScan
+
 
 
 // Android extensions import statements for the two views to update
@@ -37,7 +39,8 @@ class WifiListActivity : AppCompatActivity() {
 
     //get the List from the previous activity (e.g. pi or scanned smartphone List
     fun getList(){
-        resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>
+        resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>         /*TODO- change to Pi List*/
+
         displayList()
     }
 
@@ -75,5 +78,11 @@ class WifiListActivity : AppCompatActivity() {
 
 
    }
+
+    fun refreshButtonClicked(view: View){
+        triggerPiScan()
+        getList()
+
+    }
 
 }
