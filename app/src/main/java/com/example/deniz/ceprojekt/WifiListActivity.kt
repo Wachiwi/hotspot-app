@@ -14,7 +14,8 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import com.example.deniz.ceprojekt.triggerPiScan
-
+import kotlinx.android.synthetic.main.activity_second.view.*
+import org.json.JSONObject
 
 
 // Android extensions import statements for the two views to update
@@ -24,7 +25,9 @@ class WifiListActivity : AppCompatActivity() {
 
 
     lateinit var resultList: ArrayList<ScanResult>
+    lateinit var piList: String
     lateinit var wifiList: TextView
+    lateinit var piListJSON: JSONObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +42,15 @@ class WifiListActivity : AppCompatActivity() {
 
     //get the List from the previous activity (e.g. pi or scanned smartphone List
     fun getList(){
-        resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>         /*TODO- change to Pi List*/
-
-        displayList()
+        resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>
+        piList=intent.getSerializableExtra("piList") as String
+        piListJSON=JSONObject(piList) /*TODO - use JSON Object*/
+        /*TODO - Change type of List*/
+        displayPhoneList()
+        //displayPiList()
     }
 
-    fun displayList(){
+    fun displayPhoneList(){
 
 
         val thirdPart = Intent(this, WifiConfigurationActivity::class.java)
@@ -78,6 +84,12 @@ class WifiListActivity : AppCompatActivity() {
 
 
    }
+
+    fun displayPiList(){
+
+        //wifiList.append(piListJSON[]) /*TODO - use JSON Object*/
+        wifiList.append(piList.subSequence(1,piList.length-2))
+    }
 
     fun refreshButtonClicked(view: View){
         triggerPiScan()

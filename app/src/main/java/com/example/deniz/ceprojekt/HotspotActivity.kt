@@ -20,14 +20,54 @@ import android.widget.Button
 import java.util.*
 import android.widget.TextView
 import android.widget.Toast
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.InetAddress
+import java.net.Socket
+import java.net.URL
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
 
 lateinit var WIFI_NAME: String
 lateinit var WIFI_PASSWORD: String
-fun triggerPiScan(){
-    /*TODO - get The List from the Pi*/
+
+fun getPiIp():String{
+    /*TODO - get the dynamic pi Ip after connected to the Hotspot - Name is known - rpi*/
+
+    return "192.168.2.112"
+}
+
+fun triggerPiScan(): String {
+    /*TODO - FIX CRASH!!!!!!!*/
+    lateinit var data: String
+    val url="http://"+getPiIp()+"/"
+    val connection=URL(url).openConnection() as HttpURLConnection
+    //connection.connect() //redundant
+    data=connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
+    println(data)
+    println(JSONObject(data))
+    connection.disconnect()
+    /*with(obj.openConnection() as HttpURLConnection) {
+        requestMethod = "GET"
+        println("\nSending 'GET' request to URL : $url")
+        println("Response Code : $responseCode")
+        BufferedReader(InputStreamReader(inputStream)).use {
+            var inputLine = it.readLine()
+            while (inputLine != null) {
+                response.append(inputLine)
+                d("TEST:", inputLine.toString())
+                inputLine = it.readLine()
+            }
+            println(response.toString())
+            d("TEST2:", response.toString())
+        }
+
+    }*/
+    return data
+
 
 }
 
@@ -276,18 +316,25 @@ fun buttonClicked(){
 
     fun scanButtonClicked(view: View){
 
-        triggerPiScan()
+        val piList=triggerPiScan()
 
         val secondPart = Intent(this, WifiListActivity::class.java)
 
         //using the result list from the smatphone scan
 
-        secondPart.putExtra("resultList",resultList) /*TODO - use pi List*/
-
+        secondPart.putExtra("resultList",resultList)
+        secondPart.putExtra("piList",piList)
         startActivity(secondPart)
 
 
     }
+/*TODO - Test - delete it later*/
+    fun testButtonClicked(view: View){
+
+        var piList=triggerPiScan()
+    }
+/*TODO - Test end*/
+
 
 
     private fun requestPermission(){
