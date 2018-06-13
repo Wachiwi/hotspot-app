@@ -9,24 +9,20 @@ import android.content.pm.PackageManager
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.StrictMode
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.Log.d
 import android.view.View
 import android.widget.Button
-import java.util.*
 import android.widget.TextView
 import android.widget.Toast
+import com.github.kittinunf.fuel.httpGet
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.InetAddress
-import java.net.Socket
-import java.net.URL
+import java.util.*
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
@@ -37,19 +33,21 @@ lateinit var WIFI_PASSWORD: String
 fun getPiIp():String{
     /*TODO - get the dynamic pi Ip after connected to the Hotspot - Name is known - rpi*/
 
-    return "192.168.2.112"
+    return "192.168.2.3"
 }
 
 fun triggerPiScan(): String {
     /*TODO - FIX CRASH!!!!!!!*/
     lateinit var data: String
     val url="http://"+getPiIp()+"/"
-    val connection=URL(url).openConnection() as HttpURLConnection
+    println(1)
+    val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
     //connection.connect() //redundant
-    data=connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
-    println(data)
-    println(JSONObject(data))
-    connection.disconnect()
+    println(2)
+    println(result.get())
+    println(3)
+    println(JSONObject(result.get()))
+
     /*with(obj.openConnection() as HttpURLConnection) {
         requestMethod = "GET"
         println("\nSending 'GET' request to URL : $url")
@@ -66,7 +64,7 @@ fun triggerPiScan(): String {
         }
 
     }*/
-    return data
+    return result.get()
 
 
 }
@@ -114,6 +112,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
         setContentView(R.layout.activity_main)
 
         /*"Instances of this class [WifiManager]must be obtained using Context.getSystemService(Class) with the argument WifiManager.class
