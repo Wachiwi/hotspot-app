@@ -15,6 +15,7 @@ import android.text.style.ClickableSpan
 import android.view.View
 import com.example.deniz.ceprojekt.triggerPiScan
 import kotlinx.android.synthetic.main.activity_second.view.*
+import org.json.JSONArray
 import org.json.JSONObject
 
 
@@ -27,7 +28,7 @@ class WifiListActivity : AppCompatActivity() {
     lateinit var resultList: ArrayList<ScanResult>
     lateinit var piList: String
     lateinit var wifiList: TextView
-    lateinit var piListJSON: JSONObject
+    lateinit var piListJSON: JSONArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +45,9 @@ class WifiListActivity : AppCompatActivity() {
     fun getList(){
         resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>
         piList=intent.getSerializableExtra("piList") as String
-        piListJSON=JSONObject(piList) /*TODO - use JSON Object*/
-        /*TODO - Change type of List*/
-        displayPhoneList()
-        //displayPiList()
+        piListJSON= JSONArray(piList)
+        //displayPhoneList()
+        displayPiList()
     }
 
     fun displayPhoneList(){
@@ -84,13 +84,38 @@ class WifiListActivity : AppCompatActivity() {
 
 
    }
+/*use piListJSON.getJSONObject(i).getString("ssid") instead of result.SSID*/
+    fun displayPiList() {
+    val thirdPart = Intent(this, WifiConfigurationActivity::class.java)
+    thirdPart.putExtra("piList", piList)
 
-    fun displayPiList(){
 
-        //wifiList.append(piListJSON[]) /*TODO - use JSON Object*/
-        wifiList.append(piList.subSequence(1,piList.length-2))
+    for (i in 1 until piListJSON.length()) {
+
+
+        /*Creating a  clickable String - on click - start the third activity*/
+        val ss = SpannableString(piListJSON.getJSONObject(i).getString("ssid"))
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View?) {
+                //create a new activity passing the name of the wifi
+                thirdPart.putExtra("wifiName", piListJSON.getJSONObject(i).getString("ssid"))
+                startActivity(thirdPart)
+            }
+
+            override fun updateDrawState(ds: TextPaint?) {
+                super.updateDrawState(ds)
+                ds!!.isUnderlineText = false
+            }
+        }
+
+        ss.setSpan(clickableSpan, 0, piListJSON.getJSONObject(i).getString("ssid").length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        wifiList.movementMethod = LinkMovementMethod.getInstance();
+        wifiList.highlightColor = Color.GREEN;
+        wifiList.append(ss)
+        wifiList.append("\n")
+
     }
-
+}
     fun refreshButtonClicked(view: View){
         triggerPiScan()
         getList()
