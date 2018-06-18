@@ -39,7 +39,7 @@ fun getPiIp():String{
 }
 
 fun triggerPiScan(): String {
-
+/*TODO USE TCP CONNCECTION*/
     lateinit var data: String
     val url="http://"+getPiIp()+"/"
     val connection= URL(url).openConnection() as HttpURLConnection
@@ -182,6 +182,7 @@ fun buttonClicked(){
         registerReceiver(broadcastReceiver, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
 
         //wait 10 seconds
+
         Handler().postDelayed({
             stopScanning()
         }, 10000)
@@ -325,7 +326,7 @@ fun buttonClicked(){
         secondPart.putExtra("piList",piList)
         startActivity(secondPart)
     }
-/*TODO - Test end*/
+    /*TODO - Test end*/
 
     private fun requestPermission(){
             // Permission was not granted and must be requested

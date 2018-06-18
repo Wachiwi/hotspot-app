@@ -46,6 +46,7 @@ class WifiListActivity : AppCompatActivity() {
         resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>
         piList=intent.getSerializableExtra("piList") as String
         piListJSON= JSONArray(piList)
+
         //displayPhoneList()
         displayPiList()
     }
@@ -84,6 +85,7 @@ class WifiListActivity : AppCompatActivity() {
 
 
    }
+
 /*use piListJSON.getJSONObject(i).getString("ssid") instead of result.SSID*/
     fun displayPiList() {
     val thirdPart = Intent(this, WifiConfigurationActivity::class.java)
@@ -110,13 +112,15 @@ class WifiListActivity : AppCompatActivity() {
 
         ss.setSpan(clickableSpan, 0, piListJSON.getJSONObject(i).getString("ssid").length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         wifiList.movementMethod = LinkMovementMethod.getInstance();
-        wifiList.highlightColor = Color.GREEN;
+        wifiList.highlightColor = Color.TRANSPARENT;
         wifiList.append(ss)
         wifiList.append("\n")
 
     }
 }
+
     fun refreshButtonClicked(view: View){
+        wifiList.text="Refreshed: \n"
         triggerPiScan()
         getList()
 

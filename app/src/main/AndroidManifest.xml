@@ -37,6 +37,10 @@
         <activity android:name=".WifiConfigurationActivity">
 
         </activity>
+
+        <activity android:name=".SuccessActivity">
+
+        </activity>
     </application>
 
 </manifest>
