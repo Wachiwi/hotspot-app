@@ -83,19 +83,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/ListButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorPrimary"
-
-        android:onClick="testButtonClicked"
-        android:text="getList"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

@@ -20,12 +20,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.github.kittinunf.fuel.httpGet
 import org.json.JSONArray
-import org.json.JSONObject
+import java.io.PrintWriter
 import java.net.HttpURLConnection
+import java.net.InetAddress
+import java.net.Socket
 import java.net.URL
 import java.util.*
+import com.github.kittinunf.fuel.httpGet
+
 
 const val PERMISSION_REQUEST_ACCESS_FINE_LOCATION=0
 //const val PERMISSION_REQUEST_ACCESS_COARSE_LOCATION=0
@@ -35,21 +38,77 @@ lateinit var WIFI_PASSWORD: String
 
 fun getPiIp():String{
 
-    return "192.168.2.113"
+    return "192.168.0.1"
 }
 
 fun triggerPiScan(): String {
-/*TODO USE TCP CONNCECTION*/
-    lateinit var data: String
+    //lateinit var data: String
     val url="http://"+getPiIp()+"/"
-    val connection= URL(url).openConnection() as HttpURLConnection
+    //val connection= URL(url).openConnection() as HttpURLConnection
     //connection.connect() //redundant
-    data=connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
-    println(JSONArray(data).getJSONObject(1).getString("ssid"))
-    connection.disconnect()
-    return data
+    //data=connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
+
+    val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
+    //println(JSONArray(data).getJSONObject(1).getString("ssid"))
+   // connection.disconnect()
+    //return data
+    return result.get()
+
+    /*TODO Dokumentation mit fuel get*/
+}
+
+fun triggerPiScan2():String{
+    val serverIP: String = getPiIp()
+    val serverPort1: Int = 5454
+    val serverPort2: Int = 5455
+    var out: PrintWriter? = null
+
+    var message ="testetsttettesttttetsts"
+
+
+    //CONNECT
+    var serverAddr = InetAddress.getByName(serverIP)
+    var socket = Socket(serverAddr, serverPort1)
+
+    var output=socket.getOutputStream()
+
+    output.bufferedWriter().use { bufferedWriter-> bufferedWriter.write("SCAN") }
+
+
+    d("TEST",socket.isClosed.toString())
+
+   socket.close()
+
+    d("TEST",socket.isClosed.toString())
+
+    var socket2 = Socket(serverAddr, serverPort2)
+    var input=socket.getInputStream()
+
+    d("TEST",socket.isClosed.toString())
+    d("TEST",socket2.isClosed.toString())
+
+    while (message==""/*input.available()>0*/){
+       message=socket.getInputStream().use { it.reader().use{reader-> reader.readText()}}
+      //message+=input.reader().use { reader-> reader.readText() }
+    }
+
+    d("TEST",message)
+
+    socket2.close()
+
+    d("TEST",socket2.isClosed.toString())
+
+
+    /*TODO in Doku übertragen - über einen Socket laufen senden und empfangen - geht nicht Fehlermeldung bei 2. Verbindung Connection Reset/Connection Refused/ Software caused connection abbort
+    * hier: über 2 verschiedene Sockets: Connection Refused bei 2. Verbindung*/
+
+
+
+    return message
 
 }
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,6 +128,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var wifiManager: WifiManager
 
     lateinit var hotspotToConnectTo: ScanResult
+
+
 
 
     var actionInProgress=false
@@ -135,8 +196,8 @@ class MainActivity : AppCompatActivity() {
 
 
     fun buttonTwoClicked(view: View){
-        WIFI_NAME ="Rpi"
-        WIFI_PASSWORD="123456789"
+        WIFI_NAME ="RPi"
+        WIFI_PASSWORD="Passwort"
 
         buttonClicked()
     }
@@ -172,7 +233,7 @@ fun buttonClicked(){
 
 
 
-    private fun startScanning(){
+     fun startScanning(){
         Toast.makeText(this, "Starting Scan!",Toast.LENGTH_SHORT).show()
 
         //1. Start Scanning
@@ -188,30 +249,14 @@ fun buttonClicked(){
         }, 10000)
     }
 
-    private fun stopScanning(){
+     fun stopScanning(){
 
         unregisterReceiver(broadcastReceiver)
-        /**ONLY FOR TESTING
-        d("Test: Unregister", "0")
-
-        val stringList = ArrayList<String>()
-
-        //Add the result names to a List
-        for(result in resultList){
-            if(result.SSID==(WIFI_NAME)){
-                stringList.add(result.SSID)
-                stringList.add("\n")
-                d("Test", result.SSID)
-            }
-        }
-        *ONLY FOR TESTING end*/
-
         Toast.makeText(this, "Scan Completed!",Toast.LENGTH_SHORT).show()
-
         checkForHotspot()
     }
 
-    private fun checkForHotspot(){
+     fun checkForHotspot(){
 
         // The wifi is saved in the variable hotspotToConnectTo
         for(result in resultList){
@@ -264,7 +309,7 @@ fun buttonClicked(){
     }
         }
 
-    private fun connectToHotspot(){
+     fun connectToHotspot(){
 
         //disconnect the active wifi connection
         wifiManager.disconnect()
@@ -302,31 +347,63 @@ fun buttonClicked(){
     fun scanButtonClicked(view: View){
 
         val piList=triggerPiScan()
-
+        //val piList2=triggerPiScan2()
         val secondPart = Intent(this, WifiListActivity::class.java)
-
         //using the result list from the smatphone scan
-
-        secondPart.putExtra("resultList",resultList)
+        //secondPart.putExtra("resultList",resultList)
         secondPart.putExtra("piList",piList)
+
+        //secondPart.putExtra("piList2",piList2)
         startActivity(secondPart)
 
 
     }
-
+/*
     /*TODO - Test - delete it later*/
     fun testButtonClicked(view: View){
 
-        var piList=triggerPiScan()
+        //var piList=triggerPiScan()
+        var piList2= triggerPiScan2()
         val secondPart = Intent(this, WifiListActivity::class.java)
 
         //using the result list from the smatphone scan
 
-        secondPart.putExtra("resultList",resultList)
-        secondPart.putExtra("piList",piList)
+        //secondPart.putExtra("resultList",resultList)
+        //secondPart.putExtra("piList",piList)
+        secondPart.putExtra("piList2",piList2)
         startActivity(secondPart)
     }
-    /*TODO - Test end*/
+
+
+    fun tcp(view:View){
+
+        //TCP Connection - if not working then see https://discuss.kotlinlang.org/t/kotlin-client-tcp/6652
+
+        val serverIP: String = getPiIp()
+        val serverPort: Int = 5454
+        var out: PrintWriter? = null
+        val string = "this is my response"
+
+        //CONNECT
+
+        var serverAddr = InetAddress.getByName(serverIP)
+        var socket = Socket(serverAddr, serverPort)
+
+        //send to Pi
+        socket.getOutputStream().use { it.bufferedWriter().use { bufferedWriter-> bufferedWriter.write(string+" "+string) } }
+        /*if (out != null && !out!!.checkError()) {
+
+            out!!.println(int)
+
+            // out!!.println(password)
+
+            out!!.flush()
+        }*/
+    }
+    /*TODO - Test end*/*/
+
+
+
 
     private fun requestPermission(){
             // Permission was not granted and must be requested
