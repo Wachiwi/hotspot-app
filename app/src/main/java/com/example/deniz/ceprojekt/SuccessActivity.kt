@@ -19,12 +19,12 @@ class SuccessActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fourth)
 
-
+        wifi_name=intent.getSerializableExtra("wifi_name") as String
         successMessage = findViewById<TextView>(R.id.successMessage)
         displayedSymbol= findViewById<TextView>(R.id.displayedSymbol)
         displayedSymbol.append("\u2713")
         successMessage.append("Successfully Connected the pi to")
-        successMessage.append(intent.getSerializableExtra("wifi_name") as String)
+        successMessage.append(wifi_name)
 
 
 

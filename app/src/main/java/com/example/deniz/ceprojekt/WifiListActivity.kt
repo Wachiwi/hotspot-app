@@ -12,11 +12,16 @@ import android.text.SpannableString
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log.d
 import android.view.View
+import android.widget.ListView
 import com.example.deniz.ceprojekt.triggerPiScan
 import kotlinx.android.synthetic.main.activity_second.view.*
 import org.json.JSONArray
 import org.json.JSONObject
+import android.widget.ArrayAdapter
+
+
 
 
 // Android extensions import statements for the two views to update
@@ -28,12 +33,18 @@ class WifiListActivity : AppCompatActivity() {
     lateinit var resultList: ArrayList<ScanResult>
     lateinit var piList: String
     lateinit var wifiList: TextView
+
     lateinit var piListJSON: JSONArray
+    lateinit var piList2: String
+    lateinit var piList2JSON: JSONArray
+    lateinit var displayedList:ListView
+    lateinit var listItems: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
         wifiList = findViewById<TextView>(R.id.wifiList)
+        //displayedList=findViewById<ListView>(R.id.list)  //TODO Liste schöner machen
         getList()
 
     }
@@ -43,11 +54,8 @@ class WifiListActivity : AppCompatActivity() {
 
     //get the List from the previous activity (e.g. pi or scanned smartphone List
     fun getList(){
-        resultList= intent.getSerializableExtra("resultList") as ArrayList<ScanResult>
         piList=intent.getSerializableExtra("piList") as String
         piListJSON= JSONArray(piList)
-
-        //displayPhoneList()
         displayPiList()
     }
 
@@ -119,9 +127,79 @@ class WifiListActivity : AppCompatActivity() {
     }
 }
 
+    fun displayPiList2(){
+
+        val thirdPart = Intent(this, WifiConfigurationActivity::class.java)
+        thirdPart.putExtra("piList2", piList2)
+
+
+        for (i in 1 until piList2JSON.length()) {
+
+
+            /*Creating a  clickable String - on click - start the third activity*/
+            val ss = SpannableString(piList2JSON.getJSONObject(i).getString("SSID"))
+            val clickableSpan = object : ClickableSpan() {
+                override fun onClick(widget: View?) {
+                    //create a new activity passing the name of the wifi
+                    thirdPart.putExtra("wifiName", piList2JSON.getJSONObject(i).getString("SSID"))
+                    startActivity(thirdPart)
+                }
+
+                override fun updateDrawState(ds: TextPaint?) {
+                    super.updateDrawState(ds)
+                    ds!!.isUnderlineText = false
+                }
+            }
+
+            ss.setSpan(clickableSpan, 0, piList2JSON.getJSONObject(i).getString("ssid").length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            wifiList.movementMethod = LinkMovementMethod.getInstance();
+            wifiList.highlightColor = Color.TRANSPARENT;
+            wifiList.append(ss)
+            wifiList.append("\n")
+
+        }
+
+
+    }
+    fun displayPiList3(){
+
+        for(i in 1 until piListJSON.length()){
+           listItems[i]= piList2JSON.getJSONObject(i).getString("SSID")
+
+        }
+        d("TEST",listItems.toString())
+        val arrayAdapter = ArrayAdapter<String>(this, R.layout.listview, listItems)
+
+        //displayedList.setOnItemClickListener()
+
+        displayedList.adapter = arrayAdapter
+        //TODO - Liste schöner machen
+
+
+    }
+
+    //TODO - copy in activity_second - Liste schöner machen
+    /* <ListView
+        android:id="@+id/list"
+        android:layout_width="262dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:divider="@color/colorPrimaryDark"
+        android:dividerHeight="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/button4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wifiList" />
+*/
+
+
     fun refreshButtonClicked(view: View){
         wifiList.text="Refreshed: \n"
-        triggerPiScan()
+        piList=triggerPiScan()
+        piListJSON=JSONArray(piList)
         getList()
 
     }
