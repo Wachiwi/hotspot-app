@@ -167,4 +167,48 @@ class WifiConfigurationActivity : AppCompatActivity() {
 
     }
 
+    fun connectToWifi(){
+        var isConfigured=false
+
+        //Connection to the same wifi as pi
+        WIFI_NAME=wifiName.text.toString()
+        WIFI_PASSWORD=passwordField.text.toString()
+
+        wifiManager=this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+
+        //check if the wifi is already configured
+        for(item in wifiManager.configuredNetworks) {
+            if(item.SSID.substring(1,item.SSID.length-1)==(WIFI_NAME)) {
+                isConfigured=true
+            }
+        }
+
+        //if it is not configured, configure it
+        if(!isConfigured){
+            val conf = WifiConfiguration()
+            conf.SSID = WIFI_NAME
+            conf.preSharedKey = WIFI_PASSWORD
+            wifiManager.addNetwork(conf)
+        }
+
+        wifiManager.disconnect()
+
+        var networkId =0
+
+        //search all configured wifi connections
+        for(item in wifiManager.configuredNetworks) {
+
+            //if the netwpork is already configured, find the id and display the desired information
+            if(item.SSID.substring(1,item.SSID.length-1)==(WIFI_NAME)) {
+                networkId = item.networkId
+            }
+        }
+
+        //connect to the wifi
+        wifiManager.enableNetwork(networkId,true)
+        wifiManager.reconnect()
+
+    }
+
 }

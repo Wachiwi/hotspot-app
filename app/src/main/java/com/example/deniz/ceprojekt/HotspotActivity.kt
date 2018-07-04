@@ -46,6 +46,13 @@ fun triggerPiScan(): String {
     val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
     return result.get()
 
+    val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
+    //println(JSONArray(data).getJSONObject(1).getString("ssid"))
+   // connection.disconnect()
+    //return data
+    return result.get()
+
+    /*TODO Dokumentation mit fuel get*/
 }
 
 fun triggerPiScan2():String{
@@ -287,6 +294,37 @@ fun buttonClicked(){
             Toast.makeText(this, "not ok!",Toast.LENGTH_SHORT).show()
     }
     //TODO TEST END
+
+
+    fun tcp(view:View){
+
+        //TCP Connection - if not working then see https://discuss.kotlinlang.org/t/kotlin-client-tcp/6652
+
+        val serverIP: String = getPiIp()
+        val serverPort: Int = 5454
+        var out: PrintWriter? = null
+        val string = "this is my response"
+
+        //CONNECT
+
+        var serverAddr = InetAddress.getByName(serverIP)
+        var socket = Socket(serverAddr, serverPort)
+
+        //send to Pi
+        socket.getOutputStream().use { it.bufferedWriter().use { bufferedWriter-> bufferedWriter.write(string+" "+string) } }
+        /*if (out != null && !out!!.checkError()) {
+
+            out!!.println(int)
+
+            // out!!.println(password)
+
+            out!!.flush()
+        }*/
+    }
+    /*TODO - Test end*/*/
+
+
+
 
     private fun requestPermission(){
             // Permission was not granted and must be requested

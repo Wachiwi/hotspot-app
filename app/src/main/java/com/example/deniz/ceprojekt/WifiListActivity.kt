@@ -57,6 +57,7 @@ class WifiListActivity : AppCompatActivity() {
         piList=intent.getSerializableExtra("piList") as String
         piListJSON= JSONArray(piList)
         displayPiList()
+        //displayPiList2()
     }
 
     fun displayPhoneList(){
