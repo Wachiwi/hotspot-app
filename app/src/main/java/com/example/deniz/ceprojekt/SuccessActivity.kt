@@ -23,7 +23,7 @@ class SuccessActivity : AppCompatActivity() {
         successMessage = findViewById<TextView>(R.id.successMessage)
         displayedSymbol= findViewById<TextView>(R.id.displayedSymbol)
         displayedSymbol.append("\u2713")
-        successMessage.append("Successfully Connected the pi to")
+        successMessage.append("Successfully Connected the pi to: ")
         successMessage.append(wifi_name)
 
 

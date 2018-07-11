@@ -46,13 +46,9 @@ fun triggerPiScan(): String {
     val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
     return result.get()
 
-    val (request, response, result) = url.httpGet().responseString() // result is Result<String, FuelError>
-    //println(JSONArray(data).getJSONObject(1).getString("ssid"))
-   // connection.disconnect()
-    //return data
-    return result.get()
 
-    /*TODO Dokumentation mit fuel get*/
+
+
 }
 
 fun triggerPiScan2():String{
@@ -93,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var displayedText: TextView
     lateinit var displayedSymbol: TextView
     lateinit var recieveScanButton: Button
-    lateinit var testButton: Button //TODO
+
     //var for the wifiManager API
     lateinit var wifiManager: WifiManager
     lateinit var hotspotToConnectTo: ScanResult
@@ -127,7 +123,7 @@ class MainActivity : AppCompatActivity() {
         displayedText = findViewById<TextView>(R.id.displayedText)
         displayedSymbol= findViewById<TextView>(R.id.displayedSymbol)
         recieveScanButton=findViewById<Button>(R.id.btnReceiveScan)
-        testButton = findViewById<Button>(R.id.test)//TODO
+
     }
 
     //set variables to null/default value
@@ -276,52 +272,9 @@ fun buttonClicked(){
     }
 
 
-    //TODO TEST DELETE LATER
-    fun test(view: View){
-
-        var reachable =false
-
-        //ping to raspberry
-        var serverAddr = InetAddress.getByName("raspberrypi")
-        reachable=serverAddr.isReachable(10000)
 
 
-        if(reachable)
-            Toast.makeText(this, "ok!",Toast.LENGTH_SHORT).show()
 
-
-        if(!reachable)
-            Toast.makeText(this, "not ok!",Toast.LENGTH_SHORT).show()
-    }
-    //TODO TEST END
-
-
-    fun tcp(view:View){
-
-        //TCP Connection - if not working then see https://discuss.kotlinlang.org/t/kotlin-client-tcp/6652
-
-        val serverIP: String = getPiIp()
-        val serverPort: Int = 5454
-        var out: PrintWriter? = null
-        val string = "this is my response"
-
-        //CONNECT
-
-        var serverAddr = InetAddress.getByName(serverIP)
-        var socket = Socket(serverAddr, serverPort)
-
-        //send to Pi
-        socket.getOutputStream().use { it.bufferedWriter().use { bufferedWriter-> bufferedWriter.write(string+" "+string) } }
-        /*if (out != null && !out!!.checkError()) {
-
-            out!!.println(int)
-
-            // out!!.println(password)
-
-            out!!.flush()
-        }*/
-    }
-    /*TODO - Test end*/*/
 
 
 
